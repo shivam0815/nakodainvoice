@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>Tax Invoice</title>
+  <style>
+    * { box-sizing: border-box; }
+    body { font-family: Arial, sans-serif; font-size: 11px; margin: 0; padding: 0; }
+
+    /* page area */
+    .page {
+      width: 800px;
+      margin: 0 auto;
+      padding: 10px 15px;
+      border: 1px solid #000;
+      min-height: 1050px; /* pushes content to use more height */
+    }
+
+    .center { text-align: center; }
+    .right { text-align: right; }
+    .bold { font-weight: bold; }
+    .small { font-size: 9px; }
+    .title { font-size: 20px; font-weight: bold; }
+    table { border-collapse: collapse; width: 100%; }
+    td, th { padding: 3px 4px; vertical-align: top; }
+    .b { border: 1px solid #000; }
+    .bb { border-bottom: 1px solid #000; }
+    .br { border-right: 1px solid #000; }
+    .mt-4 { margin-top: 4px; }
+    .mt-8 { margin-top: 8px; }
+    .h-blank {
+  min-height: 14px;   /* allows more height when needed */
+  height: auto;
+}
+    .items-table th, .items-table td { border: 1px solid #000; font-size: 10px; }
+    .items-body td { height: 18px; }
+
+    /* header with logo */
+    .header {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      margin-bottom: 4px;
+    }
+    .logo-circle {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      border: 2px solid #000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      font-size: 16px;
+    }
+    .header-text {
+      text-align: center;
+    }
+
+   .logo-wrapper {
+  width: 55px;
+  height: 55px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.logo-img {
+  width: 55px;
+  height: 55px;
+  object-fit: contain;
+}
+td, th {
+  padding: 3px 4px;
+  vertical-align: top;
+  line-height: 14px;       /* spacing */
+  white-space: pre-line;   /* !!! main fix !!! */
+  word-break: break-word;  /* break long text safely */
+}
+
+.billing-col,
+.shipping-col {
+  width: 50%;
+}
+
+.billing-col div,
+.shipping-col div {
+  margin-bottom: 2px;
+}
+
+
+  </style>
+</head>
+<body>
+  <div class="page">
+    <!-- HEADER WITH LOGO -->
+    <div class="header">
+     <div class="logo-wrapper">
+  <img src="data:image/png;base64,{{logoBase64}}" class="logo-img" />
+</div>
+
+      <div class="header-text">
+        <div class="small">GSTIN : 07AHTPK3961E1Z2</div>
+        <div class="bold small">TAX INVOICE</div>
+        <div class="title">NAKODA MOBILE</div>
+        <div class="small">
+          Wholesaler of All Kinds of Fancy mobile Accessories, Cover, Head Phones &amp; EAR Phones<br/>
+          Christian Colony, Karol Bagh, Ground Floor, 23/735, Karol Bagh,<br/>
+          New Delhi, Central Delhi-110005 Tel.: 011-35616411
+        </div>
+      </div>
+    </div>
+
+    <!-- INVOICE + TRANSPORT INFO -->
+    <table class="mt-8 b">
+      <tr>
+        <td class="br" style="width: 50%;">
+          <div>Invoice No.: <b>{{invoiceNumber}}</b></div>
+          <div class="mt-4">Book No.: {{bookNumber}}</div>
+          <div class="mt-4">Date : {{date}}</div>
+        </td>
+        <td style="width: 50%;">
+          <div>Transport Name : {{transportName}}</div>
+          <div class="mt-4">Vehicle No. : {{vehicleNo}}</div>
+          <div class="mt-4">G.R. No. : {{grNo}}</div>
+          <div class="mt-4">Date &amp; Place of Supply : {{supplyDatePlace}}</div>
+        </td>
+      </tr>
+    </table>
+
+    <!-- BILLING / SHIPPING -->
+    <table class="b mt-4">
+      <tr class="bb center bold">
+        <td class="br" style="width: 50%;">Billing Details</td>
+        <td style="width: 50%;">Shipping Details</td>
+      </tr>
+      <tr>
+        <td class="br">
+          <div>Name : {{billing.name}}</div>
+          <div>Address : {{billing.address}}</div>
+          <div>State : {{billing.state}}</div>
+          <div>State Code : {{billing.stateCode}}</div>
+          <div>GSTIN : {{billing.gstin}}</div>
+        </td>
+        <td>
+          <div>Name : {{shipping.name}}</div>
+          <div>Address : {{shipping.address}}</div>
+          <div>State : {{shipping.state}}</div>
+          <div>State Code : {{shipping.stateCode}}</div>
+          <div>GSTIN : {{shipping.gstin}}</div>
+        </td>
+      </tr>
+    </table>
+
+    <!-- ITEMS -->
+    <table class="items-table mt-4">
+      <thead>
+        <tr>
+          <th style="width: 6%;">S. No.</th>
+          <th style="width: 44%;">DESCRIPTION OF GOODS</th>
+          <th style="width: 10%;">HSN Code</th>
+          <th style="width: 8%;">Qnty.</th>
+          <th style="width: 8%;">Unit</th>
+          <th style="width: 12%;">Rate</th>
+          <th style="width: 12%;">Total</th>
+        </tr>
+      </thead>
+      <tbody class="items-body">
+        {{#each items}}
+        <tr>
+          <td class="center">{{this.sr}}</td>
+          <td>{{this.description}}</td>
+          <td class="center">{{this.hsn}}</td>
+          <td class="center">{{this.qty}}</td>
+          <td class="center">{{this.unit}}</td>
+          <td class="right">{{this.rate}}</td>
+          <td class="right">{{this.amount}}</td>
+        </tr>
+        {{/each}}
+
+        <!-- extra empty rows to push content down -->
+        <tr><td>&nbsp;</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+        <tr><td>&nbsp;</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+        <tr><td>&nbsp;</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+        <tr><td>&nbsp;</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+        <tr><td>&nbsp;</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+        <tr><td>&nbsp;</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+        <tr><td>&nbsp;</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+        <tr><td>&nbsp;</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+      </tbody>
+    </table>
+
+    <!-- BANK + TAX -->
+    <table class="mt-4 b">
+      <tr>
+        <td class="br" style="width: 55%;">
+          <div>Bank Name : {{bank.bankName}}</div>
+          <div>Bank A/C Name : {{bank.accountName}}</div>
+          <div>Bank A/C No : {{bank.accountNo}}</div>
+          <div>IFSC Code : {{bank.ifsc}}</div>
+          <div class="mt-4">Invoice Value (in Words) : {{invoiceValueWords}}</div>
+          <div class="mt-4">Electronic Ref. No. (if any): {{electronicRef}}</div>
+        </td>
+        <td style="width: 45%;">
+          <table style="width:100%;">
+            <tr><td>Taxable Total Value</td><td class="right">{{tax.taxableValue}}</td></tr>
+            <tr><td>CGST @ {{tax.cgstRate}} %</td><td class="right">{{tax.cgstAmount}}</td></tr>
+            <tr><td>SGST @ {{tax.sgstRate}} %</td><td class="right">{{tax.sgstAmount}}</td></tr>
+            <tr><td>IGST @ {{tax.igstRate}} %</td><td class="right">{{tax.igstAmount}}</td></tr>
+            <tr><td>ROUND OFF</td><td class="right">{{tax.roundOff}}</td></tr>
+            <tr class="bold"><td>TOTAL INVOICE VALUE</td><td class="right">{{tax.totalInvoiceValue}}</td></tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+
+    <!-- TERMS + SIGN -->
+    <table class="mt-4 b">
+      <tr>
+        <td class="br" style="width: 60%;">
+          <div class="bold small">Terms &amp; Condition :</div>
+          <ol class="small" style="padding-left: 14px; margin: 4px 0;">
+            {{#each terms}}
+            <li>{{this}}</li>
+            {{/each}}
+          </ol>
+        </td>
+        <td style="width: 40%; vertical-align: bottom;">
+          <div class="right bold">For NAKODA MOBILE</div>
+          <div style="height: 30px;"></div>
+          <div class="right small">Auth. Signatory</div>
+        </td>
+      </tr>
+    </table>
+  </div>
+</body>
+</html>

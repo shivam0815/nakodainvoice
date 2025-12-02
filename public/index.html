@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Nakoda Invoice Maker</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      margin: 0;
+      padding: 0;
+      background: #f3f4f6;
+      color: #111827;
+    }
+    .app-shell {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 24px 16px 40px;
+    }
+    .header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .brand-logo {
+      width: 40px;
+      height: 40px;
+      border-radius: 999px;
+      background: #111827;
+      color: #f9fafb;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 18px;
+    }
+    .brand-text-title {
+      font-weight: 700;
+      font-size: 20px;
+    }
+    .brand-text-sub {
+      font-size: 12px;
+      color: #6b7280;
+    }
+    .header-right {
+      text-align: right;
+      font-size: 12px;
+      color: #6b7280;
+    }
+
+    .card {
+      background: #ffffff;
+      border-radius: 12px;
+      padding: 16px 20px 18px;
+      margin-bottom: 16px;
+      box-shadow: 0 10px 25px rgba(15, 23, 42, 0.06);
+      border: 1px solid #e5e7eb;
+    }
+    .card-title {
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 10px;
+      color: #111827;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .grid-two {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px 24px;
+    }
+    label {
+      display: block;
+      font-size: 11px;
+      font-weight: 600;
+      color: #4b5563;
+      margin-bottom: 2px;
+    }
+    input, textarea, select {
+      width: 100%;
+      padding: 6px 8px;
+      border-radius: 6px;
+      border: 1px solid #d1d5db;
+      font-size: 12px;
+      outline: none;
+      transition: border-color 0.15s, box-shadow 0.15s, background-color 0.15s;
+      background: #f9fafb;
+    }
+    input:focus, textarea:focus, select:focus {
+      border-color: #2563eb;
+      box-shadow: 0 0 0 1px rgba(37, 99, 235, 0.25);
+      background: #ffffff;
+    }
+    textarea { resize: vertical; min-height: 60px; }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      padding: 4px 8px;
+      border-radius: 999px;
+      background: #eff6ff;
+      color: #1d4ed8;
+    }
+
+    .items-table-wrapper {
+      overflow-x: auto;
+      border-radius: 8px;
+      border: 1px solid #e5e7eb;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 12px;
+    }
+    th, td {
+      padding: 6px 8px;
+      text-align: left;
+    }
+    th {
+      background: #f9fafb;
+      font-weight: 600;
+      color: #4b5563;
+      border-bottom: 1px solid #e5e7eb;
+      white-space: nowrap;
+    }
+    tbody tr:nth-child(even) {
+      background: #f9fafb;
+    }
+    tbody tr:hover {
+      background: #eff6ff;
+    }
+    td input {
+      width: 100%;
+      padding: 4px 6px;
+      font-size: 12px;
+    }
+    .btn {
+      border: none;
+      border-radius: 999px;
+      padding: 7px 14px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: background 0.15s, transform 0.1s, box-shadow 0.15s;
+    }
+    .btn-primary {
+      background: #111827;
+      color: #f9fafb;
+      box-shadow: 0 10px 20px rgba(15, 23, 42, 0.35);
+    }
+    .btn-primary:hover {
+      background: #020617;
+      transform: translateY(-1px);
+    }
+    .btn-soft {
+      background: #eef2ff;
+      color: #4338ca;
+      box-shadow: none;
+    }
+    .btn-soft:hover {
+      background: #e0e7ff;
+    }
+    .btn-ghost {
+      background: transparent;
+      color: #ef4444;
+      padding: 4px 8px;
+      border-radius: 999px;
+    }
+    .btn-ghost:hover {
+      background: #fee2e2;
+    }
+
+    .totals-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 16px;
+      margin-top: 10px;
+    }
+    .totals-right {
+      font-size: 12px;
+    }
+    .totals-right-row {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 4px;
+    }
+    .totals-right-row span:last-child {
+      font-weight: 600;
+      color: #111827;
+    }
+    .muted {
+      color: #6b7280;
+      font-size: 11px;
+    }
+    .text-right { text-align: right; }
+
+    @media (max-width: 768px) {
+      .grid-two { grid-template-columns: 1fr; }
+      .totals-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app-shell">
+    <div class="header">
+      <div class="brand">
+        <div class="brand-logo">NM</div>
+        <div>
+          <div class="brand-text-title">Nakoda Mobile</div>
+          <div class="brand-text-sub">Internal Invoice Generator</div>
+        </div>
+      </div>
+      <div class="header-right">
+        <div>GSTIN: 07AHTPK3961E1Z2</div>
+        <div>Christian Colony, Karol Bagh, New Delhi</div>
+      </div>
+    </div>
+
+    <form id="invoiceForm">
+      <!-- Invoice meta -->
+      <div class="card">
+        <div class="card-title">
+          <span>Invoice Details</span>
+          <span class="pill">Step 1 · Basic Info</span>
+        </div>
+        <div class="grid-two">
+          <div>
+            <label>Invoice No.</label>
+            <input name="invoiceNumber" value="1" />
+          </div>
+          <div>
+            <label>Book No.</label>
+            <input name="bookNumber" value="1" />
+          </div>
+          <div>
+            <label>Date</label>
+            <input type="date" name="date" />
+          </div>
+          <div>
+            <label>Place of Supply</label>
+            <input name="supplyDatePlace" value="Delhi" />
+          </div>
+          <div>
+            <label>Transport Name</label>
+            <input name="transportName" />
+          </div>
+          <div>
+            <label>Vehicle No.</label>
+            <input name="vehicleNo" />
+          </div>
+          <div>
+            <label>G.R. No.</label>
+            <input name="grNo" />
+          </div>
+        </div>
+      </div>
+
+      <!-- Billing / Shipping -->
+      <div class="card">
+        <div class="card-title">
+          <span>Parties</span>
+          <span class="pill">Step 2 · Billing & Shipping</span>
+        </div>
+        <div class="grid-two">
+          <div>
+            <h4 style="margin:0 0 6px;font-size:13px;">Billing Details</h4>
+            <label>Name</label>
+            <input name="billingName" />
+
+            <label>Address</label>
+            <textarea name="billingAddress"></textarea>
+
+            <label>State</label>
+            <input name="billingState" value="Delhi" />
+
+            <label>State Code</label>
+            <input name="billingStateCode" value="07" />
+
+            <label>GSTIN</label>
+            <input name="billingGstin" />
+          </div>
+
+          <div>
+            <h4 style="margin:0 0 6px;font-size:13px;display:flex;justify-content:space-between;align-items:center;">
+              <span>Shipping Details</span>
+              <label style="font-size:11px;font-weight:500;color:#4b5563;">
+                <input type="checkbox" id="copyBilling" checked />
+                &nbsp;Same as Billing
+              </label>
+            </h4>
+
+            <label>Name</label>
+            <input name="shippingName" />
+
+            <label>Address</label>
+            <textarea name="shippingAddress"></textarea>
+
+            <label>State</label>
+            <input name="shippingState" value="Delhi" />
+
+            <label>State Code</label>
+            <input name="shippingStateCode" value="07" />
+
+            <label>GSTIN</label>
+            <input name="shippingGstin" />
+          </div>
+        </div>
+      </div>
+
+      <!-- Items -->
+      <div class="card">
+        <div class="card-title">
+          <span>Products / Services</span>
+          <button id="addItemBtn" class="btn btn-soft" type="button">
+            + Add Item
+          </button>
+        </div>
+
+        <div class="items-table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th style="width:40px;">S.No.</th>
+                <th>Description</th>
+                <th style="width:80px;">HSN</th>
+                <th style="width:70px;">Qty</th>
+                <th style="width:70px;">Unit</th>
+                <th style="width:90px;">Rate</th>
+                <th style="width:100px;">Amount</th>
+                <th style="width:40px;"></th>
+              </tr>
+            </thead>
+            <tbody id="itemsBody">
+              <!-- rows injected by JS -->
+            </tbody>
+          </table>
+        </div>
+
+        <div style="margin-top:10px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;">
+          <div>
+            <label>GST % (total, e.g. 18)</label>
+            <input style="max-width:120px;" type="number" name="gstRate" value="18" />
+            <div class="muted">Will split 50/50 as CGST &amp; SGST.</div>
+          </div>
+          <div class="totals-right">
+            <div class="totals-right-row">
+              <span>Taxable Total</span><span id="uiTaxable">0.00</span>
+            </div>
+            <div class="totals-right-row">
+              <span>CGST</span><span id="uiCgst">0.00</span>
+            </div>
+            <div class="totals-right-row">
+              <span>SGST</span><span id="uiSgst">0.00</span>
+            </div>
+            <div class="totals-right-row" style="font-size:13px;">
+              <span>Grand Total</span><span id="uiTotal">0.00</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Bank + submit -->
+      <div class="card">
+        <div class="card-title">
+          <span>Bank & Payment</span>
+          <span class="pill">Step 3 · Finish & Download</span>
+        </div>
+        <div class="grid-two">
+          <div>
+            <label>Bank Name</label>
+            <input name="bankName" value="HDFC Bank" />
+
+            <label>Bank A/C Name</label>
+            <input name="bankAccountName" value="Nakoda Mobile" />
+
+            <label>Bank A/C No.</label>
+            <input name="bankAccountNo" />
+
+            <label>IFSC Code</label>
+            <input name="bankIfsc" />
+          </div>
+          <div style="display:flex;flex-direction:column;justify-content:space-between;">
+            <div class="muted">
+              Enter product lines above, verify totals and click **Generate Invoice**.
+              PDF will auto-download in your browser (A4, ready to print).
+            </div>
+            <div class="text-right">
+              <button class="btn btn-primary" type="submit">
+                Generate Invoice PDF
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+
+  <script>
+    const itemsBody = document.getElementById('itemsBody');
+    const addItemBtn = document.getElementById('addItemBtn');
+
+    function addItemRow(prefill = {}) {
+      const row = document.createElement('tr');
+      row.classList.add('item-row');
+
+      row.innerHTML = `
+        <td class="text-right serial-cell"></td>
+        <td><input name="desc" placeholder="Item description" value="${prefill.desc || ''}"></td>
+        <td><input name="hsn" value="${prefill.hsn || '8504'}"></td>
+        <td><input name="qty" type="number" min="0" value="${prefill.qty || 1}"></td>
+        <td><input name="unit" value="${prefill.unit || 'pcs'}"></td>
+        <td><input name="rate" type="number" min="0" value="${prefill.rate || 100}"></td>
+        <td><input name="amount" type="number" min="0" value="${prefill.amount || 100}" readonly></td>
+        <td class="text-right">
+          <button type="button" class="btn-ghost remove-btn">✕</button>
+        </td>
+      `;
+
+      itemsBody.appendChild(row);
+      renumberRows();
+      attachRowEvents(row);
+      recalcTotals();
+    }
+
+    function renumberRows() {
+      const rows = itemsBody.querySelectorAll('.item-row');
+      rows.forEach((row, idx) => {
+        const cell = row.querySelector('.serial-cell');
+        if (cell) cell.textContent = idx + 1;
+      });
+    }
+
+    function attachRowEvents(row) {
+      const qtyInput = row.querySelector('input[name="qty"]');
+      const rateInput = row.querySelector('input[name="rate"]');
+      const amtInput = row.querySelector('input[name="amount"]');
+      const removeBtn = row.querySelector('.remove-btn');
+
+      function updateAmount() {
+        const qty = Number(qtyInput.value || 0);
+        const rate = Number(rateInput.value || 0);
+        const amt = qty * rate;
+        amtInput.value = amt.toFixed(2);
+        recalcTotals();
+      }
+
+      qtyInput.addEventListener('input', updateAmount);
+      rateInput.addEventListener('input', updateAmount);
+
+      removeBtn.addEventListener('click', () => {
+        const allRows = itemsBody.querySelectorAll('.item-row');
+        if (allRows.length === 1) {
+          // keep at least 1 row
+          qtyInput.value = 1;
+          rateInput.value = 0;
+          updateAmount();
+          return;
+        }
+        row.remove();
+        renumberRows();
+        recalcTotals();
+      });
+
+      // initial calc
+      updateAmount();
+    }
+
+    function recalcTotals() {
+      const rows = itemsBody.querySelectorAll('.item-row');
+      let taxable = 0;
+      rows.forEach(row => {
+        const amt = Number(row.querySelector('input[name="amount"]').value || 0);
+        taxable += amt;
+      });
+
+      const gstRateInput = document.querySelector('input[name="gstRate"]');
+      const gstRate = Number(gstRateInput.value || 0);
+      const half = gstRate / 2;
+
+      const cgstAmount = taxable * (half / 100);
+      const sgstAmount = taxable * (half / 100);
+      const total = taxable + cgstAmount + sgstAmount;
+
+      document.getElementById('uiTaxable').textContent = taxable.toFixed(2);
+      document.getElementById('uiCgst').textContent = cgstAmount.toFixed(2);
+      document.getElementById('uiSgst').textContent = sgstAmount.toFixed(2);
+      document.getElementById('uiTotal').textContent = total.toFixed(2);
+    }
+
+    addItemBtn.addEventListener('click', () => addItemRow());
+
+    document.querySelector('input[name="gstRate"]').addEventListener('input', recalcTotals);
+
+    // Copy billing -> shipping when checkbox toggled
+    document.getElementById('copyBilling').addEventListener('change', (e) => {
+      const checked = e.target.checked;
+      if (!checked) return;
+      const form = document.getElementById('invoiceForm');
+      form.shippingName.value = form.billingName.value;
+      form.shippingAddress.value = form.billingAddress.value;
+      form.shippingState.value = form.billingState.value;
+      form.shippingStateCode.value = form.billingStateCode.value;
+      form.shippingGstin.value = form.billingGstin.value;
+    });
+
+    // Default date = today
+    document.addEventListener('DOMContentLoaded', () => {
+      const dateInput = document.querySelector('[name="date"]');
+      dateInput.valueAsNumber = Date.now() - new Date().getTimezoneOffset() * 60000;
+      addItemRow({ rate: 100, amount: 100 }); // first row
+    });
+
+    // Form submit -> call backend and download PDF
+    document.getElementById('invoiceForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const form = e.target;
+
+      const rows = itemsBody.querySelectorAll('.item-row');
+      const items = [];
+      let taxableValue = 0;
+
+      rows.forEach((row, index) => {
+        const desc = row.querySelector('input[name="desc"]').value;
+        const hsn = row.querySelector('input[name="hsn"]').value;
+        const qty = Number(row.querySelector('input[name="qty"]').value || 0);
+        const unit = row.querySelector('input[name="unit"]').value;
+        const rate = Number(row.querySelector('input[name="rate"]').value || 0);
+        const amount = qty * rate;
+        taxableValue += amount;
+
+        items.push({
+          sr: index + 1,
+          description: desc,
+          hsn,
+          qty,
+          unit,
+          rate,
+          amount,
+        });
+      });
+
+      const gstRate = Number(form.gstRate.value || 0);
+      const half = gstRate / 2;
+      const cgstAmount = taxableValue * (half / 100);
+      const sgstAmount = taxableValue * (half / 100);
+      const totalInvoiceValue = taxableValue + cgstAmount + sgstAmount;
+
+      const payload = {
+        invoiceNumber: form.invoiceNumber.value,
+        bookNumber: form.bookNumber.value,
+        date: form.date.value,
+        transportName: form.transportName.value,
+        vehicleNo: form.vehicleNo.value,
+        grNo: form.grNo.value,
+        supplyDatePlace: form.supplyDatePlace.value,
+
+        billing: {
+          name: form.billingName.value,
+          address: form.billingAddress.value,
+          state: form.billingState.value,
+          stateCode: form.billingStateCode.value,
+          gstin: form.billingGstin.value,
+        },
+        shipping: {
+          name: form.shippingName.value || form.billingName.value,
+          address: form.shippingAddress.value || form.billingAddress.value,
+          state: form.shippingState.value || form.billingState.value,
+          stateCode: form.shippingStateCode.value || form.billingStateCode.value,
+          gstin: form.shippingGstin.value || form.billingGstin.value,
+        },
+
+        items,
+
+        bank: {
+          bankName: form.bankName.value,
+          accountName: form.bankAccountName.value,
+          accountNo: form.bankAccountNo.value,
+          ifsc: form.bankIfsc.value,
+        },
+
+        tax: {
+          taxableValue,
+          cgstRate: half,
+          cgstAmount,
+          sgstRate: half,
+          sgstAmount,
+          igstRate: 0,
+          igstAmount: 0,
+          roundOff: 0,
+          totalInvoiceValue,
+        },
+
+        invoiceValueWords: 'Rupees ' + totalInvoiceValue.toFixed(2) + ' Only',
+        electronicRef: '',
+        terms: [
+          'Goods once sold will not be taken back.',
+          'Our responsibility ceases after the goods leave the dispatching place.',
+          'Bill not paid on presentation will be subject to interest at 24% p.a.',
+          'All disputes are subject Delhi Jurisdiction only.',
+          'Payment strictly by Cross Cheque or Draft.',
+        ],
+      };
+
+      const res = await fetch('/api/invoices/generate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+
+      if (!res.ok) {
+        alert('Error generating invoice');
+        return;
+      }
+
+      const blob = await res.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `invoice-${payload.invoiceNumber || 'nakoda'}.pdf`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      window.URL.revokeObjectURL(url);
+    });
+  </script>
+</body>
+</html>
