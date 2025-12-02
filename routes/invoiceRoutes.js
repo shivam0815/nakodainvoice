@@ -7,19 +7,26 @@ const Handlebars = require('handlebars');
 
 const router = express.Router();
 
-// template
+// ------------------------------
+// Load & compile invoice template once
+// ------------------------------
 const templateHtml = fs.readFileSync(
   path.join(__dirname, '..', 'views', 'nakodaInvoice.html'),
   'utf8'
 );
 const template = Handlebars.compile(templateHtml);
 
-// logo
+// ------------------------------
+// Read logo image & convert to Base64
+// ------------------------------
 const logoBuffer = fs.readFileSync(
   path.join(__dirname, '..', 'views', 'assets', 'logo.png')
 );
 const logoBase64 = logoBuffer.toString('base64');
 
+// ------------------------------
+// Generate Invoice PDF
+// ------------------------------
 router.post('/generate', async (req, res) => {
   try {
     const invoiceData = req.body;
@@ -29,6 +36,7 @@ router.post('/generate', async (req, res) => {
       logoBase64,
     });
 
+    // ---- LAUNCH USING SPARTICUZ CHROMIUM ----
     const browser = await puppeteer.launch({
       args: chromium.args,
       defaultViewport: chromium.defaultViewport,
